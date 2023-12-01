@@ -1,7 +1,6 @@
 from collections import UserDict
 from datetime import datetime
 import json
-import cmd
 
 class Field:
     def __init__(self, value):
@@ -114,6 +113,10 @@ class Record:
 
 
 class AddressBook(UserDict):
+    def __init__(self, file):
+        super().__init__()
+        self.file = file
+
     def add_record(self, record):
         self.data[record.name.value] = record
 
@@ -140,8 +143,8 @@ class AddressBook(UserDict):
 
     def dump(self):
         with open(self.file, 'wb') as file:
-            json.dump((self.record_id, self.record), file)
-
+            json.dump(self.data, file)
+            
     def load(self):
         try:
             with open(self.file, 'rb') as file:
@@ -158,12 +161,5 @@ class AddressBook(UserDict):
                 for phone in record.phones:
                     if query.lower() in phone.value.lower():
                         results.append(record)
-                        break  # Якщо збіг знайдено, переходимо до наступного запису
+                        break 
         return results
-
-
-
-    class Controller(cmd.Cmd):
-        def exit(self):
-            self.book.dump()
-            return True  # ?
