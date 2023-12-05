@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime
 import json
+import cmd
 
 class Field:
     def __init__(self, value):
@@ -163,3 +164,28 @@ class AddressBook(UserDict):
                         results.append(record)
                         break 
         return results
+    
+
+    class Controller(cmd.Cmd):
+        def __init__(self):
+            super().__init__()
+            self.book = AddressBook()
+        def save(self):
+            self.book.dump()
+
+        def loading(self):
+            self.book.load()
+
+        def search(self, arg):
+            results = self.book.find(arg)
+            if results:
+                for record in results:
+                    print(record)
+            else:
+                print("No records found.")
+        def exit(self):
+            self.book.dump()
+            return True
+    if __name__ == "__main__":
+        controller = Controller
+        controller.cmdloop()
